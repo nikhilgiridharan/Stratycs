@@ -22,9 +22,6 @@ export const metadata: Metadata = {
   title: "Stratycs",
   description:
     "Build contractor quotes on your phone. PDF by text or email in under two minutes.",
-  icons: {
-    icon: "/stratycs-logo.png",
-  },
 };
 
 export default function RootLayout({

@@ -210,7 +210,7 @@ export function SettingsForm({ business }: { business: Business }) {
       <section className="space-y-3 rounded-xl border border-border bg-card p-4">
         <h2 className="text-sm">Billing</h2>
         <p className="text-sm text-muted-foreground">
-          Pro plan: $29/mo after your 14-day trial.
+          $10/mo after your 14-day trial.
         </p>
         <div className="flex flex-col gap-2 sm:flex-row">
           <Button
