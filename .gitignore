@@ -15,6 +15,7 @@
 /build
 
 # misc
+tmp-brown-swatch.png
 .DS_Store
 *.pem
 

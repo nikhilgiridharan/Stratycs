@@ -1,28 +1,30 @@
 import type { Metadata } from "next";
-import { DM_Sans, Playfair_Display, Geist } from "next/font/google";
+import { DM_Serif_Display, Inter } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "sonner";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
-
-const playfair = Playfair_Display({
+const dmSerifDisplay = DM_Serif_Display({
   subsets: ["latin"],
   weight: ["400"],
-  variable: "--font-playfair",
+  variable: "--font-dm-serif-display",
   display: "swap",
 });
 
-const dmSans = DM_Sans({
+const inter = Inter({
   subsets: ["latin"],
   weight: ["300", "400", "500"],
-  variable: "--font-dm-sans",
+  variable: "--font-inter",
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Stratycs — Quotes from the field",
+  title: "Stratycs",
   description:
     "Build contractor quotes on your phone. PDF by text or email in under two minutes.",
+  icons: {
+    icon: "/stratycs-logo.png",
+  },
 };
 
 export default function RootLayout({
@@ -33,10 +35,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn(playfair.variable, dmSans.variable, "font-sans", geist.variable)}
+      className={cn(dmSerifDisplay.variable, inter.variable, "font-sans")}
     >
-      <body className="min-h-screen bg-[#0f0f0f] font-sans font-light text-[#e8e4dc] antialiased">
+      <body className="min-h-screen bg-background font-sans font-normal text-foreground antialiased">
         {children}
+        <Toaster richColors position="top-center" />
       </body>
     </html>
   );
