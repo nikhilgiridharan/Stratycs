@@ -1,0 +1,376 @@
+@keyframes masterLoop {
+  0%,
+  84.615% {
+    opacity: 1;
+  }
+  95.385% {
+    opacity: 0;
+  }
+  99.999% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes quoteReady {
+  0%,
+  3.076% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  9.231% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  84.615% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  95.385%,
+  100% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes customerName {
+  0%,
+  7.692% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  13.846% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  84.615% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  95.385%,
+  100% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes amount {
+  0%,
+  12.308% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  18.462% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  84.615% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  95.385%,
+  100% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes btnSendLayer {
+  0%,
+  18.462% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  24.615% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  35.385% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  36.923% {
+    opacity: 0;
+  }
+  84.615% {
+    opacity: 0;
+  }
+  95.385%,
+  100% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes btnSentLayer {
+  0%,
+  35.385% {
+    opacity: 0;
+  }
+  38.462% {
+    opacity: 1;
+  }
+  84.615% {
+    opacity: 1;
+  }
+  95.385%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes btnGlow {
+  0%,
+  30.769% {
+    box-shadow: 0 0 0 rgba(76, 232, 184, 0);
+  }
+  32.308% {
+    box-shadow: 0 0 18px rgba(76, 232, 184, 0.65);
+  }
+  33.846% {
+    box-shadow: 0 0 6px rgba(76, 232, 184, 0.35);
+  }
+  35.385% {
+    box-shadow: 0 0 16px rgba(76, 232, 184, 0.55);
+  }
+  36.923% {
+    box-shadow: 0 0 0 rgba(76, 232, 184, 0);
+  }
+  84.615% {
+    box-shadow: 0 0 0 rgba(76, 232, 184, 0);
+  }
+  95.385%,
+  100% {
+    box-shadow: 0 0 0 rgba(76, 232, 184, 0);
+  }
+}
+
+@keyframes bubble {
+  0%,
+  38.462% {
+    opacity: 0;
+    transform: translate(-50%, 40px);
+  }
+  46.154% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  84.615% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  95.385%,
+  100% {
+    opacity: 0;
+    transform: translate(-50%, 40px);
+  }
+}
+
+@keyframes badge {
+  0%,
+  58.462% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.85);
+  }
+  62.308% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+  84.615% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+  95.385%,
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.85);
+  }
+}
+
+.scene {
+  position: relative;
+  width: 300px;
+  max-width: 100%;
+  margin: 0 auto;
+  padding-bottom: 128px;
+  background: transparent;
+}
+
+.master {
+  position: relative;
+  animation: masterLoop 6.5s linear infinite;
+}
+
+.phoneWrap {
+  position: relative;
+  width: 280px;
+  max-width: 100%;
+  height: 380px;
+  margin: 0 auto;
+  overflow: visible;
+}
+
+.phone {
+  width: 280px;
+  max-width: 100%;
+  height: 380px;
+  margin: 0 auto;
+  background: #1a1a1a;
+  border: 1px solid rgba(232, 135, 58, 0.25);
+  border-radius: 32px;
+  transform: rotate(3deg);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.screen {
+  height: 100%;
+  padding: 20px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+}
+
+.quoteReady {
+  margin: 0;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #888880;
+  animation: quoteReady 6.5s ease-out forwards infinite;
+}
+
+.name {
+  margin: 10px 0 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: #e8e4dc;
+  animation: customerName 6.5s ease-out forwards infinite;
+}
+
+.amount {
+  margin: 8px 0 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #e8873a;
+  animation: amount 6.5s ease-out forwards infinite;
+}
+
+.btnGlow {
+  position: relative;
+  margin-top: auto;
+  min-height: 44px;
+  border-radius: 8px;
+  animation: btnGlow 6.5s linear forwards infinite;
+}
+
+.btnSend,
+.btnSent {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #4ce8b8;
+  color: #1a1a1a;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.btnSend {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  animation: btnSendLayer 6.5s ease-out forwards infinite;
+}
+
+.btnSent {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  animation: btnSentLayer 6.5s ease-out forwards infinite;
+}
+
+.bubble {
+  position: absolute;
+  z-index: 2;
+  bottom: -60px;
+  left: 50%;
+  width: min(268px, 100%);
+  padding: 10px 16px;
+  border-radius: 18px 18px 4px 18px;
+  background: #4ce8b8;
+  color: #1a1a1a;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 12px;
+  line-height: 1.4;
+  font-weight: 500;
+  box-sizing: border-box;
+  animation: bubble 6.5s ease-out forwards infinite;
+}
+
+.badge {
+  position: absolute;
+  z-index: 2;
+  bottom: -102px;
+  left: 50%;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(76, 232, 184, 0.15);
+  border: 1px solid #4ce8b8;
+  color: #4ce8b8;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  animation: badge 6.5s ease-out forwards infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .master,
+  .quoteReady,
+  .name,
+  .amount,
+  .btnGlow,
+  .btnSend,
+  .btnSent,
+  .bubble,
+  .badge {
+    animation: none !important;
+  }
+
+  .quoteReady,
+  .name,
+  .amount,
+  .bubble,
+  .badge {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .btnSend {
+    opacity: 0 !important;
+    pointer-events: none;
+  }
+
+  .btnSent {
+    opacity: 1 !important;
+  }
+
+  .bubble {
+    transform: translateX(-50%) !important;
+  }
+
+  .badge {
+    transform: translateX(-50%) scale(1) !important;
+  }
+}

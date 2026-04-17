@@ -12,6 +12,8 @@ const config: Config = {
       fontFamily: {
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],
         display: ["var(--font-dm-serif-display)", "Georgia", "serif"],
+        playfair: ["var(--font-playfair)", "Georgia", "serif"],
+        dmSans: ["var(--font-dm-sans)", "system-ui", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
