@@ -16,9 +16,11 @@ export function PricingSection() {
       className="border-t border-[#e8873a] bg-[#f5f2eb] px-6 py-[100px] sm:px-12"
     >
       <div className="mx-auto max-w-7xl">
-        <h2 className="text-center font-playfair text-[clamp(2.75rem,6vw,4.25rem)] font-normal leading-[1.05] text-[#2a1a0e]">
-          Pricing
-        </h2>
+        <div className="mx-auto w-full max-w-[1100px]">
+          <h2 className="pl-3 text-left font-playfair text-[clamp(2.75rem,6vw,4.25rem)] font-normal leading-[1.05] text-[#2a1a0e] sm:pl-4">
+            Pricing
+          </h2>
+        </div>
 
         <div className="mx-auto mt-10 flex w-full max-w-[1100px] flex-col items-center justify-center gap-16 md:flex-row">
           <div className="w-full shrink-0 md:max-w-[48%] md:flex-[0_0_48%]">
