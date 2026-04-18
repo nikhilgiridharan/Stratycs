@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createClient } from "@/lib/supabase/client";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export function LoginForm() {
   const router = useRouter();
@@ -16,7 +16,7 @@ export function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const supabase = createClient();
+  const supabase = createClientComponentClient();
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -35,17 +35,15 @@ export function LoginForm() {
     router.refresh();
   }
 
-  async function signInWithGoogle() {
-    setLoading(true);
+  const handleGoogleLogin = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+        redirectTo: `${window.location.origin}/auth/callback`,
       },
     });
-    setLoading(false);
-    if (error) toast.error(error.message);
-  }
+    if (error) console.error("Google OAuth error:", error);
+  };
 
   return (
     <>
@@ -106,7 +104,7 @@ export function LoginForm() {
         type="button"
         variant="outline"
         className="min-h-11 w-full"
-        onClick={signInWithGoogle}
+        onClick={handleGoogleLogin}
         disabled={loading}
       >
         Continue with Google
