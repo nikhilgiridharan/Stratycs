@@ -2,15 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ClipboardList, Home, PlusCircle, Settings } from "lucide-react";
+import { ClipboardList, FileText, Home, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const items = [
   { href: "/dashboard", label: "Dashboard", icon: Home, match: (p: string) => p === "/dashboard" },
   {
-    href: "/quotes/new",
-    label: "New Quote",
-    icon: PlusCircle,
+    href: "/quotes",
+    label: "Quotes",
+    icon: FileText,
     match: (p: string) => p.startsWith("/quotes"),
   },
   {

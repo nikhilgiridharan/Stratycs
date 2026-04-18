@@ -78,6 +78,14 @@ export function LoginForm() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
+        <div className="flex justify-end">
+          <Link
+            href="/forgot-password"
+            className="text-sm text-primary hover:underline"
+          >
+            Forgot password?
+          </Link>
+        </div>
         <Button
           type="submit"
           className="min-h-11 w-full"

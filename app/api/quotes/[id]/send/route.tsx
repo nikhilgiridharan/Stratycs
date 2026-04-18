@@ -100,7 +100,11 @@ export async function POST(
   const baseUrl =
     process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ??
     "http://localhost:3000";
-  const publicUrl = `${baseUrl}/quote/${q.public_id}`;
+  const publicUrl = `${baseUrl}/q/${q.public_id}`;
+
+  const sentAt = new Date().toISOString();
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + 14);
 
   let pdfUrl: string | null = null;
   try {
@@ -122,7 +126,8 @@ export async function POST(
     .from("quotes")
     .update({
       status: "sent",
-      sent_at: new Date().toISOString(),
+      sent_at: sentAt,
+      expires_at: expiresAt.toISOString(),
       pdf_url: pdfUrl,
     })
     .eq("id", id);
@@ -131,7 +136,12 @@ export async function POST(
     return NextResponse.json({ error: upErr.message }, { status: 500 });
   }
 
-  const msg = `${b.name} sent you a quote. View it here: ${publicUrl}`;
+  const totalStr = Number(q.total).toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+  });
+  const customerFirst = q.customer_name.trim().split(/\s+/)[0] || "there";
+  const msg = `${customerFirst}, ${b.name} sent you a quote for ${totalStr}. Review it here: ${publicUrl} — Sent via Stratycs`;
 
   if (delivery === "sms" || delivery === "both") {
     const phone = q.customer_phone;
@@ -155,7 +165,16 @@ export async function POST(
     await sendEmail({
       to: email,
       subject: `Quote #${q.quote_number} from ${b.name}`,
-      html: `<p>${msg}</p>`,
+      html: `
+        <div style="font-family:system-ui,sans-serif;max-width:480px;line-height:1.5">
+          <p>Hi ${q.customer_name || "there"},</p>
+          <p><strong>${b.name}</strong> sent you an estimate for <strong>${totalStr}</strong>.</p>
+          <p style="margin:24px 0">
+            <a href="${publicUrl}" style="display:inline-block;padding:12px 20px;background:#4ce8b8;color:#1a1a1a;text-decoration:none;border-radius:8px;font-weight:600">View your quote</a>
+          </p>
+          <p style="color:#666;font-size:14px">Or copy this link:<br/><a href="${publicUrl}">${publicUrl}</a></p>
+          <p style="color:#999;font-size:12px;margin-top:32px">Sent via Stratycs</p>
+        </div>`,
     });
   }
 

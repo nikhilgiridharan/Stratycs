@@ -31,9 +31,24 @@ export default async function DashboardPage() {
       q.status !== "draft" &&
       q.sent_at &&
       new Date(q.sent_at) >= monthStart,
-  ).length;
-  const approved = list.filter((q) => q.status === "approved").length;
-  const revenue = list.reduce((s, q) => s + Number(q.total), 0);
+  );
+  const sentCount = sentThisMonth.length;
+
+  const approvedThisMonth = list.filter(
+    (q) =>
+      q.status === "approved" &&
+      q.approved_at &&
+      new Date(q.approved_at) >= monthStart,
+  );
+  const approvedValueThisMonth = approvedThisMonth.reduce(
+    (s, q) => s + Number(q.total),
+    0,
+  );
+  const approvedCountThisMonth = approvedThisMonth.length;
+  const approvalRatePct =
+    sentCount > 0
+      ? Math.round((approvedCountThisMonth / sentCount) * 100)
+      : 0;
 
   const paywall = shouldShowPaywall(business);
 
@@ -44,32 +59,50 @@ export default async function DashboardPage() {
           <h1 className="font-display text-2xl text-foreground">Dashboard</h1>
           <p className="text-sm text-muted-foreground">{business.name}</p>
         </div>
-        <Link
-          href="/quotes/new"
-          className={cn(buttonVariants(), "inline-flex min-h-11 items-center justify-center px-4")}
-        >
-          New quote
-        </Link>
+        {paywall ? (
+          <Link
+            href="/settings"
+            className={cn(
+              buttonVariants(),
+              "hidden min-h-11 items-center justify-center px-4 sm:inline-flex",
+            )}
+          >
+            Add payment
+          </Link>
+        ) : (
+          <Link
+            href="/quotes/new"
+            className={cn(
+              buttonVariants(),
+              "hidden min-h-11 items-center justify-center px-4 sm:inline-flex",
+            )}
+          >
+            New quote
+          </Link>
+        )}
       </div>
 
       {paywall ? (
-        <Card className="border-primary/40 bg-card">
+        <Card className="border-[#e8873a]/40 bg-card">
           <CardHeader>
-            <CardTitle className="text-base">Subscription required</CardTitle>
+            <CardTitle className="text-lg font-semibold text-foreground">
+              Your free trial has ended
+            </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3 text-sm text-muted-foreground">
+          <CardContent className="space-y-4 text-sm text-muted-foreground">
             <p>
-              Your trial has ended. Add a card to keep sending quotes. You can
-              still view drafts.
+              Add a payment method to keep sending quotes. You can still review
+              your quote history.
             </p>
+            <p className="text-xs">No contracts. Cancel anytime.</p>
             <Link
               href="/settings"
               className={cn(
                 buttonVariants(),
-                "inline-flex min-h-11 items-center justify-center px-4",
+                "inline-flex min-h-12 min-w-[200px] items-center justify-center bg-[#4ce8b8] px-6 text-base font-semibold text-[#1a1a1a] hover:bg-[#4ce8b8]/90",
               )}
             >
-              Open billing
+              Start plan — $29/mo
             </Link>
           </CardContent>
         </Card>
@@ -79,27 +112,29 @@ export default async function DashboardPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-xs font-medium text-muted-foreground">
-              Sent this month
+              Quotes sent this month
             </CardTitle>
           </CardHeader>
-          <CardContent className="text-2xl font-semibold">{sentThisMonth}</CardContent>
+          <CardContent className="text-2xl font-semibold">{sentCount}</CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-xs font-medium text-muted-foreground">
-              Approved (all time)
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-2xl font-semibold">{approved}</CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xs font-medium text-muted-foreground">
-              Revenue quoted
+              Approved value (this month)
             </CardTitle>
           </CardHeader>
           <CardContent className="text-2xl font-semibold">
-            ${revenue.toFixed(0)}
+            ${approvedValueThisMonth.toFixed(0)}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-xs font-medium text-muted-foreground">
+              Approval rate (this month)
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-2xl font-semibold">
+            {approvalRatePct}%
           </CardContent>
         </Card>
       </div>
@@ -109,9 +144,9 @@ export default async function DashboardPage() {
         {list.length === 0 ? (
           <Card>
             <CardContent className="py-10 text-center text-sm text-muted-foreground">
-              No quotes yet.{" "}
+              No quotes yet. Tap + to create your first one, or{" "}
               <Link href="/quotes/new" className="text-primary underline">
-                Create one
+                start here
               </Link>
               .
             </CardContent>
@@ -138,6 +173,19 @@ export default async function DashboardPage() {
           </div>
         )}
       </div>
+
+      {!paywall ? (
+        <Link
+          href="/quotes/new"
+          className={cn(
+            buttonVariants(),
+            "fixed bottom-24 right-4 z-40 flex h-14 min-h-[56px] items-center gap-2 rounded-full px-6 shadow-lg md:bottom-8",
+          )}
+          style={{ backgroundColor: "#4ce8b8", color: "#1a1a1a" }}
+        >
+          + New Quote
+        </Link>
+      ) : null}
     </div>
   );
 }

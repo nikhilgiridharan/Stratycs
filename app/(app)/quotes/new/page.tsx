@@ -1,11 +1,13 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getBusinessForUser } from "@/lib/data/business";
+import { canSendQuotes } from "@/lib/subscription";
 
 export default async function NewQuotePage() {
   const business = await getBusinessForUser();
   if (!business) redirect("/onboarding");
   if (!business.onboarding_completed) redirect("/onboarding");
+  if (!canSendQuotes(business)) redirect("/dashboard");
 
   const supabase = await createClient();
   const { data, error } = await supabase

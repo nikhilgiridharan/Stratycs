@@ -2,6 +2,8 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getBusinessForUser } from "@/lib/data/business";
 import { QuoteBuilder } from "@/components/quotes/QuoteBuilder";
+import { QuoteDetailView } from "@/components/quotes/QuoteDetailView";
+import { canSendQuotes } from "@/lib/subscription";
 import type { LineItem, Quote, QuoteLineItem } from "@/types";
 
 export default async function QuoteEditorPage({
@@ -31,6 +33,20 @@ export default async function QuoteEditorPage({
     .eq("quote_id", id)
     .order("id");
 
+  const q = quote as Quote;
+  const canSend = canSendQuotes(business);
+
+  if (q.status !== "draft") {
+    return (
+      <QuoteDetailView
+        business={business}
+        quote={q}
+        lines={(lines ?? []) as QuoteLineItem[]}
+        canSend={canSend}
+      />
+    );
+  }
+
   const { data: catalog } = await supabase
     .from("line_items")
     .select("*")
@@ -41,9 +57,10 @@ export default async function QuoteEditorPage({
   return (
     <QuoteBuilder
       business={business}
-      quote={quote as Quote}
+      quote={q}
       catalog={(catalog ?? []) as LineItem[]}
       initialLines={(lines ?? []) as QuoteLineItem[]}
+      canSend={canSend}
     />
   );
 }

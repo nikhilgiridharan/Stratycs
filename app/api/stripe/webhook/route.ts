@@ -63,6 +63,42 @@ export async function POST(request: Request) {
           .eq("stripe_customer_id", customerId);
       }
     }
+
+    if (event.type === "customer.subscription.deleted") {
+      const sub = event.data.object as Stripe.Subscription;
+      const customerId =
+        typeof sub.customer === "string" ? sub.customer : null;
+      if (customerId) {
+        await admin
+          .from("businesses")
+          .update({ subscription_status: "canceled" })
+          .eq("stripe_customer_id", customerId);
+      }
+    }
+
+    if (event.type === "invoice.payment_succeeded") {
+      const inv = event.data.object as Stripe.Invoice;
+      const customerId =
+        typeof inv.customer === "string" ? inv.customer : null;
+      if (customerId) {
+        await admin
+          .from("businesses")
+          .update({ subscription_status: "active" })
+          .eq("stripe_customer_id", customerId);
+      }
+    }
+
+    if (event.type === "invoice.payment_failed") {
+      const inv = event.data.object as Stripe.Invoice;
+      const customerId =
+        typeof inv.customer === "string" ? inv.customer : null;
+      if (customerId) {
+        await admin
+          .from("businesses")
+          .update({ subscription_status: "past_due" })
+          .eq("stripe_customer_id", customerId);
+      }
+    }
   } catch (e) {
     console.error(e);
     return NextResponse.json({ error: "Webhook handler failed" }, { status: 500 });

@@ -25,6 +25,7 @@ export interface Business {
   id: string;
   user_id: string;
   name: string;
+  owner_name: string | null;
   phone: string | null;
   email: string | null;
   logo_url: string | null;
@@ -74,6 +75,7 @@ export interface Quote {
   created_at: string;
   sent_at: string | null;
   approved_at: string | null;
+  expires_at: string | null;
 }
 
 export interface QuoteLineItem {

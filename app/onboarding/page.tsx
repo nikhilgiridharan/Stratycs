@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { createClient } from "@/lib/supabase/client";
 
 const trialDays = 14;
@@ -18,12 +19,16 @@ export default function OnboardingPage() {
   const [businessId, setBusinessId] = useState<string | null>(null);
 
   const [name, setName] = useState("");
+  const [ownerName, setOwnerName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
+  const [license, setLicense] = useState("");
   const [logoUrl, setLogoUrl] = useState("");
-  const [labor, setLabor] = useState("85");
+  const [labor, setLabor] = useState("95");
   const [markup, setMarkup] = useState("15");
+  const [taxRate, setTaxRate] = useState("8.25");
+  const [taxEnabled, setTaxEnabled] = useState(true);
 
   useEffect(() => {
     void (async () => {
@@ -34,6 +39,7 @@ export default function OnboardingPage() {
         router.replace("/login");
         return;
       }
+      if (user.email) setEmail(user.email);
       const { data: biz } = await supabase
         .from("businesses")
         .select("id, onboarding_completed")
@@ -63,9 +69,11 @@ export default function OnboardingPage() {
     const row = {
       user_id: user.id,
       name,
+      owner_name: ownerName.trim() || null,
       phone,
-      email,
-      address,
+      email: email || user.email,
+      address: address || null,
+      license_number: license || null,
       trial_ends_at: trialEnd.toISOString(),
       subscription_status: "trialing",
     };
@@ -114,6 +122,8 @@ export default function OnboardingPage() {
       .update({
         default_labor_rate: Number(labor),
         default_markup_percent: Number(markup),
+        tax_rate_percent: Number(taxRate),
+        tax_enabled: taxEnabled,
         onboarding_completed: true,
       })
       .eq("id", businessId);
@@ -142,15 +152,28 @@ export default function OnboardingPage() {
     setLoading(false);
   }
 
+  const progressPct = (step / 3) * 100;
+
   return (
     <div>
-      <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-        Step {step} of 3
-      </p>
+      <div className="mb-6">
+        <div className="mb-2 flex justify-between text-xs font-medium text-muted-foreground">
+          <span>
+            Step {step} of 3
+          </span>
+        </div>
+        <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+          <div
+            className="h-full bg-[#e8873a] transition-all duration-300"
+            style={{ width: `${progressPct}%` }}
+          />
+        </div>
+      </div>
+
       <h1 className="mb-6 font-display text-2xl text-foreground">
         {step === 1 && "Business info"}
         {step === 2 && "Logo (optional)"}
-        {step === 3 && "Defaults"}
+        {step === 3 && "Pricing defaults"}
       </h1>
 
       {step === 1 && (
@@ -166,10 +189,21 @@ export default function OnboardingPage() {
             />
           </div>
           <div className="space-y-2">
+            <Label htmlFor="owner-name">Your name</Label>
+            <Input
+              id="owner-name"
+              required
+              className="min-h-11"
+              value={ownerName}
+              onChange={(e) => setOwnerName(e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
             <Label htmlFor="biz-phone">Phone</Label>
             <Input
               id="biz-phone"
               type="tel"
+              required
               className="min-h-11"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
@@ -186,12 +220,21 @@ export default function OnboardingPage() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="biz-address">Address</Label>
+            <Label htmlFor="biz-address">Address (optional)</Label>
             <Input
               id="biz-address"
               className="min-h-11"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="license">License number (optional)</Label>
+            <Input
+              id="license"
+              className="min-h-11"
+              value={license}
+              onChange={(e) => setLicense(e.target.value)}
             />
           </div>
           <Button type="submit" className="min-h-11 w-full" disabled={loading}>
@@ -218,20 +261,20 @@ export default function OnboardingPage() {
           </div>
           <Button
             type="button"
+            variant="outline"
+            className="min-h-[52px] w-full border-2 text-base"
+            onClick={() => void saveStep2(true)}
+            disabled={loading}
+          >
+            Skip for now
+          </Button>
+          <Button
+            type="button"
             className="min-h-11 w-full"
             onClick={() => void saveStep2(false)}
             disabled={loading}
           >
             Save & continue
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            className="min-h-11 w-full"
-            onClick={() => void saveStep2(true)}
-            disabled={loading}
-          >
-            Skip
           </Button>
         </div>
       )}
@@ -263,6 +306,28 @@ export default function OnboardingPage() {
               value={markup}
               onChange={(e) => setMarkup(e.target.value)}
             />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="tax">Tax rate %</Label>
+            <Input
+              id="tax"
+              type="number"
+              min={0}
+              step="0.01"
+              required
+              className="min-h-11"
+              value={taxRate}
+              onChange={(e) => setTaxRate(e.target.value)}
+            />
+          </div>
+          <div className="flex min-h-[44px] items-center justify-between gap-3 rounded-lg border border-border px-3 py-2">
+            <div>
+              <p className="text-sm font-medium">Charge tax by default</p>
+              <p className="text-xs text-muted-foreground">
+                You can toggle per quote.
+              </p>
+            </div>
+            <Switch checked={taxEnabled} onCheckedChange={setTaxEnabled} />
           </div>
           <Button type="submit" className="min-h-11 w-full" disabled={loading}>
             {loading ? "Finishing…" : "Finish setup"}

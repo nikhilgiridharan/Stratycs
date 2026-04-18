@@ -23,6 +23,7 @@ import {
   computeQuoteTotals,
 } from "@/lib/quote-math";
 import type { Business, LineItem, Quote, QuoteLineItem } from "@/types";
+import { shouldShowPaywall } from "@/lib/subscription";
 import type { LineItemCategory } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -52,7 +53,9 @@ export function QuoteBuilder(props: {
   quote: Quote;
   catalog: LineItem[];
   initialLines: QuoteLineItem[];
+  canSend?: boolean;
 }) {
+  const canSend = props.canSend ?? !shouldShowPaywall(props.business);
   const supabase = createClient();
   const [customerName, setCustomerName] = useState(props.quote.customer_name);
   const [customerPhone, setCustomerPhone] = useState(
@@ -218,7 +221,7 @@ export function QuoteBuilder(props: {
   const previewMessage = useMemo(() => {
     const base =
       process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ?? "https://app.stratycs.com";
-    const url = `${base}/quote/${props.quote.public_id}`;
+    const url = `${base}/q/${props.quote.public_id}`;
     return `${props.business.name} sent you a quote. View it here: ${url}`;
   }, [props.business.name, props.quote.public_id]);
 
@@ -470,8 +473,13 @@ export function QuoteBuilder(props: {
           <Button
             type="button"
             className="min-h-12 flex-1"
-            disabled={saving}
+            disabled={saving || !canSend}
             onClick={() => setSendOpen(true)}
+            title={
+              !canSend
+                ? "Add a payment method to send quotes after your trial."
+                : undefined
+            }
           >
             Send quote
           </Button>
