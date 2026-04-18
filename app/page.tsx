@@ -40,12 +40,12 @@ export default function Home() {
               <div className="w-full min-w-0 max-w-full basis-full md:max-w-[52%] md:flex-[0_0_52%]">
                 <div className="border-l-2 border-[#00D4B4] bg-background pl-8 pr-4 pt-2 pb-4 text-left sm:pl-12 sm:pr-8 lg:pl-20 lg:pr-12">
                   <h1 className="mb-6 max-w-4xl text-foreground">
-                    Quote Fast. Win More.
+                    Stop Losing Jobs to the Guy Who Quotes Faster.
                   </h1>
                   <p className="max-w-[560px] font-light text-foreground">
-                    Stratycs builds simple software tools for tradespeople. Our
-                    quoting tool lets contractors generate a professional, branded
-                    estimate in 60 seconds — straight from their phone.
+                    Send a professional, branded estimate in 60 seconds — straight
+                    from your phone. No app store. No training. Just open it and
+                    quote.
                   </p>
                 </div>
               </div>
@@ -76,17 +76,17 @@ export default function Home() {
                     {
                       n: "01",
                       title: "Choose your trade",
-                      body: "Select from plumbing, electrical, HVAC.",
+                      body: "Select your trade. We pre-load the parts and labor rates so you never start from scratch.",
                     },
                     {
                       n: "02",
                       title: "Pick your line items",
-                      body: "Pre-loaded parts and labor.",
+                      body: "Tap the items for this job. Adjust quantities if needed. Total updates instantly.",
                     },
                     {
                       n: "03",
                       title: "Send the quote",
-                      body: "PDF via text or email instantly.",
+                      body: "One tap sends a branded PDF to the customer via text or email. Done.",
                     },
                   ].map((step) => (
                     <article

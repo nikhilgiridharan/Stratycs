@@ -84,6 +84,12 @@ export function HeroPhoneMockup() {
                 <span className={styles.totalPrice}>$1,680</span>
               </div>
             </div>
+            <div className={styles.postTotal}>
+              <span className={styles.sentSmsLabel}>Sent via SMS</span>
+              <div className={`${styles.approvalLine} ${styles.approvalFadeIn}`}>
+                Sarah M. approved your quote · $1,680
+              </div>
+            </div>
             <div className={styles.item10}>
               <div className={styles.sendBtn} role="presentation">
                 Send Quote ✓

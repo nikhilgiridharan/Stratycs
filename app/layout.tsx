@@ -42,8 +42,9 @@ export const metadata: Metadata = {
   description:
     "Build contractor quotes on your phone. PDF by text or email in under two minutes.",
   icons: {
-    icon: "/favicon.ico",
-    apple: "/favicon.ico",
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
   },
 };
 
@@ -63,6 +64,11 @@ export default function RootLayout({
         "font-sans",
       )}
     >
+      <head>
+        <link rel="icon" href="/favicon.png" type="image/png" />
+        <link rel="shortcut icon" href="/favicon.png" />
+        <link rel="apple-touch-icon" href="/favicon.png" />
+      </head>
       <body className="min-h-screen bg-background font-sans font-normal text-foreground antialiased">
         {children}
         <Toaster richColors position="top-center" />

@@ -17,6 +17,10 @@ export function PricingSection() {
     >
       <div className="mx-auto max-w-7xl">
         <div className="mx-auto w-full max-w-[1100px]">
+          <p className="mb-6 text-center font-dmSans text-base font-light leading-relaxed text-[#3d342c]">
+            No bloated software. No 30-feature dashboard. Just quotes — in under
+            60 seconds.
+          </p>
           <h2 className="pl-3 text-left font-playfair text-[clamp(2.75rem,6vw,4.25rem)] font-normal leading-[1.05] text-[#2a1a0e] sm:pl-4">
             Pricing
           </h2>
