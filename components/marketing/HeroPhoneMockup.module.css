@@ -324,20 +324,22 @@
 }
 
 .topBar {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
+  align-self: flex-start;
+  max-width: 100%;
+  padding: 5px 10px;
+  border-radius: 9999px;
+  border: 1px solid rgba(232, 135, 58, 0.35);
+  background: rgba(10, 8, 6, 0.85);
 }
 
-.planeIcon {
-  flex-shrink: 0;
-  color: #e8873a;
-}
-
-.brandLabel {
-  font-weight: 500;
-  font-size: 13px;
-  letter-spacing: 0.02em;
+.brandImage {
+  height: 26px;
+  width: auto;
+  max-width: min(100%, 200px);
+  object-fit: contain;
+  object-position: left center;
 }
 
 .newQuote {
