@@ -1,8 +1,10 @@
 import { createBrowserClient } from "@supabase/ssr";
+import { SUPABASE_CONFIGURE_HELP } from "@/lib/supabase/configure-help";
+import {
+  SUPABASE_FALLBACK_ANON_KEY,
+  SUPABASE_FALLBACK_URL,
+} from "@/lib/supabase/defaults";
 
-const placeholderUrl = "https://placeholder.supabase.co";
-const placeholderKey =
-  "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYW5vbiJ9.placeholder";
 
 function envOrPlaceholder(
   raw: string | undefined,
@@ -14,22 +16,25 @@ function envOrPlaceholder(
 
 /** URL/key fallbacks so the browser client never initializes with empty strings (avoids runtime errors during local dev). */
 export const supabaseBrowserEnv = {
-  url: envOrPlaceholder(process.env.NEXT_PUBLIC_SUPABASE_URL, placeholderUrl),
+  url: envOrPlaceholder(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    SUPABASE_FALLBACK_URL,
+  ),
   anonKey: envOrPlaceholder(
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    placeholderKey,
+    SUPABASE_FALLBACK_ANON_KEY,
   ),
 } as const;
 
-/** Shown when OAuth / auth would hit placeholder.supabase.co or empty env. */
-export const SUPABASE_CONFIGURE_HELP =
-  "Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in your host’s environment. On Vercel: Project → Settings → Environment Variables, then Redeploy (required so Next.js can embed them). Locally: use .env.local and restart `npm run dev`.";
+/** Re-export for login/signup imports. */
+export { SUPABASE_CONFIGURE_HELP };
 
 /** False when env vars were missing or empty at build time, or still using placeholder host. */
 export function isSupabaseBrowserConfigured(): boolean {
   const { url, anonKey } = supabaseBrowserEnv;
   if (!url || !anonKey) return false;
-  if (url === placeholderUrl || anonKey === placeholderKey) return false;
+  if (url === SUPABASE_FALLBACK_URL || anonKey === SUPABASE_FALLBACK_ANON_KEY)
+    return false;
   if (url.includes("placeholder.supabase.co")) return false;
   return true;
 }

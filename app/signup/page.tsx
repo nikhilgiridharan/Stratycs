@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { signupWithEmail } from "./actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,28 +21,26 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const supabase = createClient();
-  const authReady = isSupabaseBrowserConfigured();
+  const oauthReady = isSupabaseBrowserConfigured();
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!authReady) {
-      toast.error(SUPABASE_CONFIGURE_HELP);
-      return;
-    }
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback?next=/onboarding`,
-        },
-      });
-      if (error) {
-        toast.error(formatSupabaseNetworkError(error.message));
+      const res = await signupWithEmail(email, password);
+      if (!res.ok) {
+        toast.error(formatSupabaseNetworkError(res.message));
         return;
       }
-      toast.success("Check your email to confirm, or continue to onboarding.");
+      if (res.needsEmailConfirmation) {
+        toast.success(
+          "Check your inbox to confirm your email, then log in to continue.",
+        );
+        router.push("/login");
+        router.refresh();
+        return;
+      }
+      toast.success("Account created — let’s finish setup.");
       router.push("/onboarding");
       router.refresh();
     } catch (err) {
@@ -53,7 +52,7 @@ export default function SignupPage() {
   }
 
   async function signInWithGoogle() {
-    if (!authReady) {
+    if (!oauthReady) {
       toast.error(SUPABASE_CONFIGURE_HELP);
       return;
     }
@@ -109,11 +108,7 @@ export default function SignupPage() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <Button
-            type="submit"
-            className="min-h-11 w-full"
-            disabled={loading || !authReady}
-          >
+          <Button type="submit" className="min-h-11 w-full" disabled={loading}>
             {loading ? "Creating…" : "Create account"}
           </Button>
         </form>
@@ -132,15 +127,15 @@ export default function SignupPage() {
           variant="outline"
           className="min-h-11 w-full"
           onClick={() => void signInWithGoogle()}
-          disabled={loading || !authReady}
+          disabled={loading || !oauthReady}
         >
           Continue with Google
         </Button>
-        {!authReady ? (
+        {!oauthReady ? (
           <p className="mt-2 text-center text-xs leading-snug text-muted-foreground">
-            Sign up needs Supabase env vars on your host (
-            <code className="rounded px-1 text-[11px]">NEXT_PUBLIC_*</code>).
-            Redeploy after adding them on Vercel.
+            Google sign-in still needs{' '}
+            <code className="rounded px-1 text-[11px]">NEXT_PUBLIC_*</code> in
+            the client bundle (.env.local or Vercel + redeploy).
           </p>
         ) : null}
         <p className="mt-8 text-center text-sm text-muted-foreground">
