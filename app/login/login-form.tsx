@@ -7,7 +7,12 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createClient } from "@/lib/supabase/client";
+import {
+  createClient,
+  formatSupabaseNetworkError,
+  isSupabaseBrowserConfigured,
+  SUPABASE_CONFIGURE_HELP,
+} from "@/lib/supabase/client";
 
 export function LoginForm() {
   const router = useRouter();
@@ -20,30 +25,51 @@ export function LoginForm() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    setLoading(false);
-    if (error) {
-      toast.error(error.message);
+    if (!isSupabaseBrowserConfigured()) {
+      toast.error(SUPABASE_CONFIGURE_HELP);
       return;
     }
-    toast.success("Signed in");
-    router.push(next);
-    router.refresh();
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) {
+        toast.error(formatSupabaseNetworkError(error.message));
+        return;
+      }
+      toast.success("Signed in");
+      router.push(next);
+      router.refresh();
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Something went wrong";
+      toast.error(formatSupabaseNetworkError(msg));
+    } finally {
+      setLoading(false);
+    }
   }
 
   const handleGoogleLogin = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
-      },
-    });
-    if (error) console.error("Google OAuth error:", error);
+    if (!isSupabaseBrowserConfigured()) {
+      toast.error(SUPABASE_CONFIGURE_HELP);
+      return;
+    }
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+        },
+      });
+      if (error) toast.error(formatSupabaseNetworkError(error.message));
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Something went wrong";
+      toast.error(formatSupabaseNetworkError(msg));
+    }
   };
+
+  const authReady = isSupabaseBrowserConfigured();
 
   return (
     <>
@@ -87,7 +113,7 @@ export function LoginForm() {
         <Button
           type="submit"
           className="min-h-11 w-full"
-          disabled={loading}
+          disabled={loading || !authReady}
         >
           {loading ? "Signing in…" : "Continue"}
         </Button>
@@ -104,11 +130,18 @@ export function LoginForm() {
         type="button"
         variant="outline"
         className="min-h-11 w-full"
-        onClick={handleGoogleLogin}
-        disabled={loading}
+        onClick={() => void handleGoogleLogin()}
+        disabled={loading || !authReady}
       >
         Continue with Google
       </Button>
+      {!authReady ? (
+        <p className="mt-2 text-center text-xs leading-snug text-muted-foreground">
+          Google sign-in needs Supabase env vars on your host (
+          <code className="rounded px-1 text-[11px]">NEXT_PUBLIC_*</code>).
+          Redeploy after adding them on Vercel.
+        </p>
+      ) : null}
       <p className="mt-8 text-center text-sm text-muted-foreground">
         New here?{" "}
         <Link href="/signup" className="text-primary hover:underline">

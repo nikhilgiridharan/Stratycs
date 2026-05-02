@@ -7,7 +7,12 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createClient } from "@/lib/supabase/client";
+import {
+  createClient,
+  formatSupabaseNetworkError,
+  isSupabaseBrowserConfigured,
+  SUPABASE_CONFIGURE_HELP,
+} from "@/lib/supabase/client";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -15,37 +20,58 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const supabase = createClient();
+  const authReady = isSupabaseBrowserConfigured();
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setLoading(true);
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback?next=/onboarding`,
-      },
-    });
-    setLoading(false);
-    if (error) {
-      toast.error(error.message);
+    if (!authReady) {
+      toast.error(SUPABASE_CONFIGURE_HELP);
       return;
     }
-    toast.success("Check your email to confirm, or continue to onboarding.");
-    router.push("/onboarding");
-    router.refresh();
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=/onboarding`,
+        },
+      });
+      if (error) {
+        toast.error(formatSupabaseNetworkError(error.message));
+        return;
+      }
+      toast.success("Check your email to confirm, or continue to onboarding.");
+      router.push("/onboarding");
+      router.refresh();
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Something went wrong";
+      toast.error(formatSupabaseNetworkError(msg));
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function signInWithGoogle() {
+    if (!authReady) {
+      toast.error(SUPABASE_CONFIGURE_HELP);
+      return;
+    }
     setLoading(true);
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=/onboarding`,
-      },
-    });
-    setLoading(false);
-    if (error) toast.error(error.message);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=/onboarding`,
+        },
+      });
+      if (error) toast.error(formatSupabaseNetworkError(error.message));
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Something went wrong";
+      toast.error(formatSupabaseNetworkError(msg));
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -86,7 +112,7 @@ export default function SignupPage() {
           <Button
             type="submit"
             className="min-h-11 w-full"
-            disabled={loading}
+            disabled={loading || !authReady}
           >
             {loading ? "Creating…" : "Create account"}
           </Button>
@@ -105,11 +131,18 @@ export default function SignupPage() {
           type="button"
           variant="outline"
           className="min-h-11 w-full"
-          onClick={signInWithGoogle}
-          disabled={loading}
+          onClick={() => void signInWithGoogle()}
+          disabled={loading || !authReady}
         >
           Continue with Google
         </Button>
+        {!authReady ? (
+          <p className="mt-2 text-center text-xs leading-snug text-muted-foreground">
+            Sign up needs Supabase env vars on your host (
+            <code className="rounded px-1 text-[11px]">NEXT_PUBLIC_*</code>).
+            Redeploy after adding them on Vercel.
+          </p>
+        ) : null}
         <p className="mt-8 text-center text-sm text-muted-foreground">
           Already have an account?{" "}
           <Link href="/login" className="text-primary hover:underline">
