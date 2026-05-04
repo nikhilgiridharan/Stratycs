@@ -1,12 +1,14 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { getSupabaseOAuthRouteCredentials } from "@/lib/supabase/oauth-route-credentials";
 
 export async function createClient() {
   const cookieStore = await cookies();
+  const creds = getSupabaseOAuthRouteCredentials();
 
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://placeholder.supabase.co",
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
+    creds?.url ?? "https://placeholder.supabase.co",
+    creds?.anonKey ??
       "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYW5vbiJ9.placeholder",
     {
       cookies: {

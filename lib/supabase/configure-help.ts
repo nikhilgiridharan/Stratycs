@@ -1,6 +1,6 @@
-/** Env + redeploy reminder for NEXT_PUBLIC_* (shared by browser + server). */
+/** Env + redeploy reminder when the browser bundle has no embedded Supabase API URL/key. */
 export const SUPABASE_CONFIGURE_HELP =
-  "Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in your host environment. On Vercel: Project Settings - Environment Variables, then redeploy so Next.js can embed them. Locally: create .env.local and restart npm run dev.";
+  "Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY from Supabase - Settings - API (needed at build time for the browser). Vercel: Project Settings - Environment Variables, redeploy. Local: .env.local, restart npm run dev. Optionally add SUPABASE_URL and SUPABASE_ANON_KEY with the same values for the server.";
 
 /** Shown after Google OAuth bootstrap fails due to missing or placeholder Supabase secrets. */
 export const SUPABASE_OAUTH_ROUTE_CONFIGURE_HELP =

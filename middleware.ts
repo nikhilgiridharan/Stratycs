@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
+import { getSupabaseOAuthRouteCredentials } from "@/lib/supabase/oauth-route-credentials";
 
 const protectedPrefixes = [
   "/dashboard",
@@ -16,16 +17,16 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  const supabaseCreds = getSupabaseOAuthRouteCredentials();
+  if (!supabaseCreds) {
     return NextResponse.next();
   }
 
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://placeholder.supabase.co",
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
-      "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYW5vbiJ9.placeholder",
+    supabaseCreds.url,
+    supabaseCreds.anonKey,
     {
       cookies: {
         getAll() {
