@@ -9,12 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { formatSupabaseNetworkError } from "@/lib/supabase/client";
-import { useOauthConfigureErrorToast } from "@/lib/supabase/use-oauth-config-error-toast";
-
-const GOOGLE_SIGNUP_URL = "/api/auth/google?next=%2Fonboarding";
 
 export function SignupForm() {
-  useOauthConfigureErrorToast("/signup");
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -86,25 +82,6 @@ export function SignupForm() {
           {loading ? "Creating…" : "Create account"}
         </Button>
       </form>
-      <div className="relative my-8">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t border-border" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">Or</span>
-        </div>
-      </div>
-      <Button
-        type="button"
-        variant="outline"
-        className="min-h-11 w-full"
-        disabled={loading}
-        onClick={() => {
-          window.location.assign(GOOGLE_SIGNUP_URL);
-        }}
-      >
-        Continue with Google
-      </Button>
       <p className="mt-8 text-center text-sm text-muted-foreground">
         Already have an account?{" "}
         <Link href="/login" className="text-primary hover:underline">

@@ -13,10 +13,8 @@ import {
   isSupabaseBrowserConfigured,
   SUPABASE_CONFIGURE_HELP,
 } from "@/lib/supabase/client";
-import { useOauthConfigureErrorToast } from "@/lib/supabase/use-oauth-config-error-toast";
 
 export function LoginForm() {
-  useOauthConfigureErrorToast("/login");
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get("next") ?? "/dashboard";
@@ -51,8 +49,6 @@ export function LoginForm() {
       setLoading(false);
     }
   }
-
-  const googleStartUrl = `/api/auth/google?next=${encodeURIComponent(next)}`;
 
   const authReady = isSupabaseBrowserConfigured();
 
@@ -103,25 +99,6 @@ export function LoginForm() {
           {loading ? "Signing in…" : "Continue"}
         </Button>
       </form>
-      <div className="relative my-8">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t border-border" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">Or</span>
-        </div>
-      </div>
-      <Button
-        type="button"
-        variant="outline"
-        className="min-h-11 w-full"
-        disabled={loading}
-        onClick={() => {
-          window.location.assign(googleStartUrl);
-        }}
-      >
-        Continue with Google
-      </Button>
       <p className="mt-8 text-center text-sm text-muted-foreground">
         New here?{" "}
         <Link href="/signup" className="text-primary hover:underline">
