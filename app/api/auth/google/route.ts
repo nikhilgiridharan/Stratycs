@@ -1,25 +1,42 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
-import { SUPABASE_CONFIGURE_HELP } from "@/lib/supabase/configure-help";
 import { getSupabaseOAuthRouteCredentials } from "@/lib/supabase/oauth-route-credentials";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-/** Server-backed Google OAuth so we read Supabase env at runtime (Vercel) instead of inlined client vars. */
-export async function GET(request: NextRequest) {
-  const creds = getSupabaseOAuthRouteCredentials();
-  if (!creds) {
-    return NextResponse.json(
-      { error: SUPABASE_CONFIGURE_HELP },
-      { status: 503 },
-    );
+function oauthConfigRedirect(request: NextRequest, safeNext: string) {
+  const referer = request.headers.get("referer") ?? "";
+  let fromSignup = false;
+  try {
+    const origin = request.nextUrl.origin;
+    const u = referer ? new URL(referer) : null;
+    fromSignup = u?.origin === origin && u.pathname.startsWith("/signup");
+  } catch {
+    /* ignore bad Referer */
   }
 
+  const target = request.nextUrl.clone();
+  target.pathname = fromSignup ? "/signup" : "/login";
+  target.search = "";
+  target.searchParams.set("oauth_error", "config");
+  if (!fromSignup && safeNext && safeNext !== "/dashboard") {
+    target.searchParams.set("next", safeNext);
+  }
+  return NextResponse.redirect(target);
+}
+
+/** Server-backed Google OAuth so we read Supabase env at runtime (Vercel) instead of inlined client vars. */
+export async function GET(request: NextRequest) {
   const rawNext =
     request.nextUrl.searchParams.get("next")?.trim() || "/dashboard";
   const safeNext =
     rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/dashboard";
+
+  const creds = getSupabaseOAuthRouteCredentials();
+  if (!creds) {
+    return oauthConfigRedirect(request, safeNext);
+  }
 
   const merged = new Map<
     string,
