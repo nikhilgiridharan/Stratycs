@@ -120,14 +120,6 @@ export function LoginForm() {
       >
         Continue with Google
       </Button>
-        <p className="mt-2 text-center text-xs leading-snug text-muted-foreground">
-          Uses server OAuth. Set{" "}
-          <code className="rounded px-1 text-[11px]">SUPABASE_URL</code> +
-          <code className="rounded px-1 text-[11px]">SUPABASE_ANON_KEY</code>{" "}
-          on Vercel (recommended), or ensure{" "}
-          <code className="rounded px-1 text-[11px]">NEXT_PUBLIC_*</code> matches
-          your project and redeploy.
-        </p>
       <p className="mt-8 text-center text-sm text-muted-foreground">
         New here?{" "}
         <Link href="/signup" className="text-primary hover:underline">

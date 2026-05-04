@@ -106,14 +106,6 @@ export default function SignupPage() {
         >
           Continue with Google
         </Button>
-        <p className="mt-2 text-center text-xs leading-snug text-muted-foreground">
-          Uses server OAuth. Add{" "}
-          <code className="rounded px-1 text-[11px]">SUPABASE_URL</code> +
-          <code className="rounded px-1 text-[11px]">SUPABASE_ANON_KEY</code> on
-          Vercel with the same values as your Supabase API settings (most
-          reliable), or redeploy after setting{" "}
-          <code className="rounded px-1 text-[11px]">NEXT_PUBLIC_*</code>.
-        </p>
         <p className="mt-8 text-center text-sm text-muted-foreground">
           Already have an account?{" "}
           <Link href="/login" className="text-primary hover:underline">
