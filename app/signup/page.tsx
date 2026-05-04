@@ -8,20 +8,15 @@ import { signupWithEmail } from "./actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  createClient,
-  formatSupabaseNetworkError,
-  isSupabaseBrowserConfigured,
-  SUPABASE_CONFIGURE_HELP,
-} from "@/lib/supabase/client";
+import { formatSupabaseNetworkError } from "@/lib/supabase/client";
+
+const GOOGLE_SIGNUP_URL = "/api/auth/google?next=%2Fonboarding";
 
 export default function SignupPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const supabase = createClient();
-  const oauthReady = isSupabaseBrowserConfigured();
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -43,28 +38,6 @@ export default function SignupPage() {
       toast.success("Account created — let’s finish setup.");
       router.push("/onboarding");
       router.refresh();
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Something went wrong";
-      toast.error(formatSupabaseNetworkError(msg));
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function signInWithGoogle() {
-    if (!oauthReady) {
-      toast.error(SUPABASE_CONFIGURE_HELP);
-      return;
-    }
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback?next=/onboarding`,
-        },
-      });
-      if (error) toast.error(formatSupabaseNetworkError(error.message));
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Something went wrong";
       toast.error(formatSupabaseNetworkError(msg));
@@ -126,18 +99,21 @@ export default function SignupPage() {
           type="button"
           variant="outline"
           className="min-h-11 w-full"
-          onClick={() => void signInWithGoogle()}
-          disabled={loading || !oauthReady}
+          disabled={loading}
+          onClick={() => {
+            window.location.assign(GOOGLE_SIGNUP_URL);
+          }}
         >
           Continue with Google
         </Button>
-        {!oauthReady ? (
-          <p className="mt-2 text-center text-xs leading-snug text-muted-foreground">
-            Google sign-in still needs{' '}
-            <code className="rounded px-1 text-[11px]">NEXT_PUBLIC_*</code> in
-            the client bundle (.env.local or Vercel + redeploy).
-          </p>
-        ) : null}
+        <p className="mt-2 text-center text-xs leading-snug text-muted-foreground">
+          Uses server OAuth. Add{" "}
+          <code className="rounded px-1 text-[11px]">SUPABASE_URL</code> +
+          <code className="rounded px-1 text-[11px]">SUPABASE_ANON_KEY</code> on
+          Vercel with the same values as your Supabase API settings (most
+          reliable), or redeploy after setting{" "}
+          <code className="rounded px-1 text-[11px]">NEXT_PUBLIC_*</code>.
+        </p>
         <p className="mt-8 text-center text-sm text-muted-foreground">
           Already have an account?{" "}
           <Link href="/login" className="text-primary hover:underline">

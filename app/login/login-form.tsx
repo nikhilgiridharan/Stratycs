@@ -50,24 +50,7 @@ export function LoginForm() {
     }
   }
 
-  const handleGoogleLogin = async () => {
-    if (!isSupabaseBrowserConfigured()) {
-      toast.error(SUPABASE_CONFIGURE_HELP);
-      return;
-    }
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
-        },
-      });
-      if (error) toast.error(formatSupabaseNetworkError(error.message));
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Something went wrong";
-      toast.error(formatSupabaseNetworkError(msg));
-    }
-  };
+  const googleStartUrl = `/api/auth/google?next=${encodeURIComponent(next)}`;
 
   const authReady = isSupabaseBrowserConfigured();
 
@@ -130,18 +113,21 @@ export function LoginForm() {
         type="button"
         variant="outline"
         className="min-h-11 w-full"
-        onClick={() => void handleGoogleLogin()}
-        disabled={loading || !authReady}
+        disabled={loading}
+        onClick={() => {
+          window.location.assign(googleStartUrl);
+        }}
       >
         Continue with Google
       </Button>
-      {!authReady ? (
         <p className="mt-2 text-center text-xs leading-snug text-muted-foreground">
-          Google sign-in needs Supabase env vars on your host (
-          <code className="rounded px-1 text-[11px]">NEXT_PUBLIC_*</code>).
-          Redeploy after adding them on Vercel.
+          Uses server OAuth. Set{" "}
+          <code className="rounded px-1 text-[11px]">SUPABASE_URL</code> +
+          <code className="rounded px-1 text-[11px]">SUPABASE_ANON_KEY</code>{" "}
+          on Vercel (recommended), or ensure{" "}
+          <code className="rounded px-1 text-[11px]">NEXT_PUBLIC_*</code> matches
+          your project and redeploy.
         </p>
-      ) : null}
       <p className="mt-8 text-center text-sm text-muted-foreground">
         New here?{" "}
         <Link href="/signup" className="text-primary hover:underline">
